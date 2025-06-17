@@ -1,0 +1,91 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign up</title>
+  {% tailwind_css %}
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-100">
+
+  <div class="w-full max-w-md bg-white rounded shadow p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Create account</h1>
+
+    <form id="signupForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Username</label>
+        <input name="username" type="text" required
+               class="w-full rounded border px-3 py-2 focus:ring focus:border-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">E-mail</label>
+        <input name="email" type="email" required
+               class="w-full rounded border px-3 py-2 focus:ring focus:border-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Password</label>
+        <input name="password1" type="password" required
+               class="w-full rounded border px-3 py-2 focus:ring focus:border-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Confirm password</label>
+        <input name="password2" type="password" required
+               class="w-full rounded border px-3 py-2 focus:ring focus:border-blue-400" />
+      </div>
+
+      <button type="submit"
+              class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded">
+        Sign up
+      </button>
+    </form>
+
+    <p id="error"
+       class="hidden mt-4 text-center text-red-600"></p>
+    <p class="mt-4 text-center text-sm">
+      Already have an account?
+      <a href="/" class="text-blue-600 hover:underline">Log in</a>
+    </p>
+  </div>
+
+<script>
+const form  = document.getElementById("signupForm");
+const errEl = document.getElementById("error");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    username   : form.username.value.trim(),
+    email      : form.email.value.trim(),
+    password1  : form.password1.value,
+    password2  : form.password2.value,
+  };
+
+  // simple client-side check
+  if (payload.password1 !== payload.password2) {
+      errEl.textContent = "Passwords do not match";
+      errEl.classList.remove("hidden");
+      return;
+  }
+
+  const res = await fetch("/api/auth/registration/", {
+      method : "POST",
+      headers: {"Content-Type": "application/json"},
+      body   : JSON.stringify(payload)
+  });
+
+  if (res.ok) {
+      // registration succeeded; optionally auto-login or redirect to login
+      window.location.href = "/";
+  } else {
+      const data = await res.json();
+      errEl.textContent = Object.values(data).flat().join(" ");
+      errEl.classList.remove("hidden");
+  }
+});
+</script>
+</body>
+</html>

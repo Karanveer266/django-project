@@ -1,0 +1,89 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Log in</title>
+  {% tailwind_css %}
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-100">
+
+  <div class="w-full max-w-md bg-white rounded shadow p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Sign in</h1>
+
+    <!-- Either identifier may be filled; the JS below enforces that rule -->
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Username (optional)</label>
+        <input name="username" type="text"
+               class="w-full rounded border px-3 py-2 focus:ring focus:border-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">E-mail (optional)</label>
+        <input name="email" type="email"
+               class="w-full rounded border px-3 py-2 focus:ring focus:border-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Password</label>
+        <input name="password" type="password" required
+               class="w-full rounded border px-3 py-2 focus:ring focus:border-blue-400" />
+      </div>
+
+      <button type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+        Log in
+      </button>
+    </form>
+
+    <p id="error"
+       class="hidden mt-4 text-center text-red-600"></p>
+  </div>
+
+<script>
+const form  = document.getElementById('loginForm');
+const errEl = document.getElementById('error');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // Build payload
+  const payload = {
+    username : form.username.value.trim(),
+    email    : form.email.value.trim(),
+    password : form.password.value
+  };
+
+  // --------- client-side check: need at least one identifier ------
+  if (!payload.username && !payload.email) {
+      errEl.textContent = 'Enter username OR e-mail';
+      errEl.classList.remove('hidden');
+      return;
+  }
+  // ---------------------------------------------------------------
+
+  const res = await fetch('/api/auth/login/', {
+      method : 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body   : JSON.stringify(payload)
+  });
+
+  if (res.ok) {
+      const {access, refresh} = await res.json();
+
+      /* PRODUCTION TIP
+         Storing tokens in localStorage is fine for a demo.
+         Switch to an HTTP-only cookie for refresh in real apps. */
+      localStorage.setItem('access',  access);
+      localStorage.setItem('refresh', refresh);
+
+      window.location.href = '/home/';
+  } else {
+      errEl.textContent = 'Invalid credentials';
+      errEl.classList.remove('hidden');
+  }
+});
+</script>
+</body>
+</html>
