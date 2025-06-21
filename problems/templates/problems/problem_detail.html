@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ problem.title }}</h1>
+<p>{{ problem.description }}</p>
+<p>Difficulty: {{ problem.difficulty }}</p>
+<a href="{% url 'problem_list' %}">Back to Problems</a>
+{% endblock %}

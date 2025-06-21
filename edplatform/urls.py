@@ -17,10 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from dj_rest_auth.views import LogoutView # Import LogoutView
 
 urlpatterns = [
     path("admin/", admin.site.urls),                   # classic session-based admin
     path("api/auth/",             include("dj_rest_auth.urls")),            # login/logout
+    path('api/auth/logout/', LogoutView.as_view(), name='logout'), # Add this line
     path("api/auth/registration/",include("dj_rest_auth.registration.urls")),# sign-up flow
     # path("api/auth/jwt/",         include("dj_rest_auth.jwt.urls")),        # obtain/refresh
     path('',      TemplateView.as_view(template_name='login.html'), name='login-page'),
@@ -28,5 +30,7 @@ urlpatterns = [
     path("signup/", TemplateView.as_view(template_name="signup.html"), name="signup"),
     path("login/", TemplateView.as_view(template_name="login.html"), name="login"),
     path("dashboard/", TemplateView.as_view(template_name="dashboard.html"), name="dashboard"),
+    path('problems/', include('problems.urls')),
+    path('blogs/', include('blogs.urls')),
 ]
 

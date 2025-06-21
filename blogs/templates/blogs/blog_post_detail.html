@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p>By {{ post.author.username }} on {{ post.published_date|date:"F d, Y" }}</p>
+<div>{{ post.content|linebreaksbr }}</div>
+<a href="{% url 'blog_post_list' %}">Back to Blog Posts</a>
+{% endblock %}
