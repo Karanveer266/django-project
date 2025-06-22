@@ -148,7 +148,7 @@
                         class="h-full rounded-full
                                bg-gradient-to-r from-fuchsia-600 to-indigo-600
                                transition-all duration-500"
-                        style="width: {{ problem.completion_percent }}%">
+                        style="width: {{ problem.completion_percent|default:0 }}%"></div>
                       </div>
                     </div>
 
